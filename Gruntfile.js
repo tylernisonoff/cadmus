@@ -9,13 +9,20 @@ module.exports = function(grunt) {
         tslint: 'tslint.json',
         src: 'src/**/*.ts',
         test: 'test/**/*.ts',
-        build: 'build'
+        build: 'build',
+        spec: 'build/test/**/*.js'
       }
     }
   });
 
   grunt.registerTask('default', [
+    'tslint:src',
+    'typescript:src'
+  ]);
+
+  grunt.registerTask('test', [
     'tslint',
-    'typescript'
+    'typescript',
+    'mochaTest'
   ]);
 };
