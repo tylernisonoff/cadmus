@@ -1,0 +1,23 @@
+{
+  "name": "cadmus",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Find mutual connections from your employees",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pspeter3/cadmus.git"
+  },
+  "keywords": [
+    "asana",
+    "network"
+  ],
+  "author": "Phips Peter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pspeter3/cadmus/issues"
+  },
+  "homepage": "https://github.com/pspeter3/cadmus"
+}
