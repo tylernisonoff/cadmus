@@ -3,11 +3,11 @@ module.exports = function(grunt) {
     options: {
       configuration: grunt.file.readJSON('tslint.json')
     },
-    files: {
-      src: [
-        '<%= files.src %>',
-        '<%= files.test %>'
-      ]
+    src: {
+      src: ['<%= files.src %>']
+    },
+    test: {
+      src: ['<%= files.test %>']
     }
   }
 };

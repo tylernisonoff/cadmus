@@ -8,7 +8,8 @@ module.exports = function(grunt) {
       files: {
         tslint: 'tslint.json',
         src: 'src/**/*.ts',
-        test: 'test/**/*.ts'
+        test: 'test/**/*.ts',
+        build: 'build'
       }
     }
   });
