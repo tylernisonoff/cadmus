@@ -4,7 +4,9 @@ import express = require("express");
 var app = express();
 
 app.get("/", (req, res) => {
-   res.send("Hello World!!!");
+   res.json({
+       "ok": true
+   });
 });
 
 app.listen(3000, () => {
