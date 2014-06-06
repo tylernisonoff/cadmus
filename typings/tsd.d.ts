@@ -3,3 +3,4 @@
 /// <reference path="bluebird/bluebird.d.ts" />
 /// <reference path="pg/pg.d.ts" />
 /// <reference path="express/express.d.ts" />
+/// <reference path="node/node.d.ts" />
