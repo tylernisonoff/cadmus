@@ -4,6 +4,7 @@
   "private": true,
   "description": "Find mutual connections from your employees",
   "scripts": {
+    "start": "node build/src/index.js",
     "test": "grunt test"
   },
   "repository": {
