@@ -25,12 +25,15 @@ I'm a huge fan of `gulp` but the TypeScript tooling for `grunt` is a lot better 
 fighting with the build system all of the time so I chose to use `grunt`. Here are some of the tasks you can run by
 doing `grunt <taskname>`.
 
+- **_default_** Lint and compile your source code
+- **dev** Run the express server with automatic compilation
+- **test** Lint, compile and test your code
+- **lint** Run the TypeScript linter
 - **tslint** Check the code against the `tslint.json`
   * **:src** Lint your source code
   * **:test** Lint your test code
 - **typescript** Compile your TypeScript code
   * **:src** Compile your source code
   * **:test** Compile your test code
+- **express** Run the express server using the compiled JS
 - **mochaTest** Test your compiled JavaScript code
-- **test** Lint, compile and test your code
-- **__defaut__** Lint and compile your source code
