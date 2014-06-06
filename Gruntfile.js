@@ -10,6 +10,8 @@ module.exports = function(grunt) {
         src: 'src/**/*.ts',
         test: 'test/**/*.ts',
         build: 'build',
+        index: 'build/src/index.js',
+        app: 'build/src/**/*.js',
         spec: 'build/test/**/*.js'
       }
     }
@@ -19,6 +21,14 @@ module.exports = function(grunt) {
     'tslint:src',
     'typescript:src'
   ]);
+
+  grunt.registerTask('dev', [
+    'default',
+    'express:dev',
+    'watch'
+  ]);
+
+  grunt.registerTask('lint', ['tslint']);
 
   grunt.registerTask('test', [
     'tslint',

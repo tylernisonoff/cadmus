@@ -1,7 +1,9 @@
 module.exports = {
   options: {
     target: 'ES5',
-    indentStep: 2
+    module: 'commonjs',
+    indentStep: 2,
+    noImplicitAny: true
   },
   src: {
     src: ['<%= files.src %>'],
