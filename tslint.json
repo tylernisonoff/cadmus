@@ -50,7 +50,6 @@
       "indexSignature",
       "parameter",
       "propertySignature",
-      "variableDeclarator",
       "memberVariableDeclarator"
     ],
     "variable-name": [true, "allow-leading-underscore"],
