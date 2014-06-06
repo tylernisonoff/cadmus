@@ -15,6 +15,14 @@ passport.use(new passportAsana.Strategy(config.ASANA_STRATEGY, (accessToken, ref
     done(null, profile);
 }));
 
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+   done(null, id);
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
