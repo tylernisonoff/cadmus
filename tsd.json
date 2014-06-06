@@ -22,6 +22,9 @@
     },
     "node/node.d.ts": {
       "commit": "e315225df6808c091324d915d1effac04145f576"
+    },
+    "passport/passport.d.ts": {
+      "commit": "e315225df6808c091324d915d1effac04145f576"
     }
   }
 }
