@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-    id int PRIMARY KEY UNIQUE NOT NULL,
+    id bigint PRIMARY KEY UNIQUE NOT NULL,
     name text NOT NULL
 );
 
