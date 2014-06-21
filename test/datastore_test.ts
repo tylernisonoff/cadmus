@@ -15,5 +15,20 @@ describe("Datastore", () => {
             var datastore = new Datastore(databaseUrl, connect);
             datastore.query("foobar", []);
         });
+
+        it("should release the client if there is an error", () => {
+            var databaseUrl = "postgres://localhost/cadmus";
+            var released = false;
+            var connect = (connection: string, callback: (err: Error, client: pg.Client, done: () => void) => void) => {
+                callback(new Error("Failed!!!"), null, () => {
+                    released = true;
+                });
+            };
+            var datastore = new Datastore(databaseUrl, connect);
+            var assertReleased = () => {
+                assert(released);
+            };
+            return datastore.query("foobar", []).then(assertReleased, assertReleased);
+        });
     });
 });
