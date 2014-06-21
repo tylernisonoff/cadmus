@@ -1,3 +1,4 @@
+/* tslint:disable:no-any */
 /// <reference path="../typings/bluebird/bluebird.d.ts" />
 /// <reference path="../typings/pg/pg.d.ts" />
 import pg = require("pg");

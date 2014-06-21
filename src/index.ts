@@ -17,7 +17,8 @@ interface Profile {
     displayName: string;
 }
 
-passport.use(new passportAsana.Strategy(config.ASANA_STRATEGY, (accessToken: string, refreshToken: string, profile: Profile, done: (err: Error, profile: Profile) => void) => {
+passport.use(new passportAsana.Strategy(config.ASANA_STRATEGY,
+    (accessToken: string, refreshToken: string, profile: Profile, done: (err: Error, profile: Profile) => void) => {
     return datastore.getOrCreateUser(profile.id, profile.displayName).nodeify(done);
 }));
 
