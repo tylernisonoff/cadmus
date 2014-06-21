@@ -15,7 +15,7 @@ class Datastore {
         this.connect = connect;
     }
 
-    private query(queryText: string, values: any[]): Promise<pg.QueryResult> {
+    public query(queryText: string, values: any[]): Promise<pg.QueryResult> {
         return new Promise((resolve: (value: pg.QueryResult) => void, reject: (err: Error) => void) => {
             this.connect(this.databaseUrl, (err, client, release) => {
                 if (err) {

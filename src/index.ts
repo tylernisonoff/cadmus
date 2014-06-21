@@ -1,21 +1,14 @@
 /// <reference path="../typings/express/express.d.ts" />
 /// <reference path="../typings/passport/passport.d.ts" />
 /// <reference path="../typings/passport-asana/passport-asana.d.ts" />
-/// <reference path="../typings/pg/pg.d.ts" />
 import config = require("./config");
+import connect = require("./connect");
 import Datastore = require("./datastore");
 import express = require("express");
 import passport = require("passport");
 import passportAsana = require("passport-asana");
-import pg = require("pg");
 
 var app = express();
-
-console.log(config);
-
-var connect = (connection: string, callback: (err: Error, client: pg.Client, done: () => void) => void): void => {
-    pg.connect(connection, callback);
-};
 
 var datastore = new Datastore(config.DATABASE_URL, connect);
 

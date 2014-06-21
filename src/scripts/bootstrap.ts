@@ -1,11 +1,13 @@
 /// <reference path="../../typings/bluebird/bluebird.d.ts" />
-/// <reference path="../../typings/pg/pg.d.ts" />
 import config = require("../config");
+import connect = require("../connect");
+import Datastore = require("../datastore");
 import fs = require("fs");
-import pg = require("pg");
 import Promise = require("bluebird");
 
 var schemaFile = process.argv[2];
+
+var datastore = new Datastore(config.DATABASE_URL, connect);
 
 var readSchemaFile = new Promise((resolve: (value: string) => void, reject: (reason: Error) => void) => {
     fs.readFile(schemaFile, {
@@ -19,17 +21,7 @@ var readSchemaFile = new Promise((resolve: (value: string) => void, reject: (rea
 });
 
 var createSchema = readSchemaFile.then((schema: string) => {
-    var client = new pg.Client(config.DATABASE_URL);
-    return new Promise((resolve: (value: pg.QueryResult) => void, reject: (reason: Error) => void) => {
-        client.query(schema, (err, result) => {
-            console.log(err, result);
-            client.end();
-            if (err) {
-                return reject(err);
-            }
-            return resolve(result);
-        });
-    });
+    return datastore.query(schema, []);
 });
 
 createSchema.then(console.log, console.error);
