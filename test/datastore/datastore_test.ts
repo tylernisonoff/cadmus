@@ -40,6 +40,40 @@ var createDatastore = (queryText: string, values: any[], err: Error, result: pg.
     return new Datastore(DATABASE_URL, connect);
 };
 
+interface MultipleQueriesDatastore {
+    datastore: Datastore;
+    assertLength: (length?: number) => void;
+}
+
+var createDatastoreWithMultipleQueries = (
+    queries: string[],
+    values: any[][],
+    errs: Error[],
+    results: pg.QueryResult[]): MultipleQueriesDatastore => {
+    var connect = (connection: string, callback: (err: Error, client: Queryable, done: () => void) => void) => {
+        var query = queries.shift();
+        var params = values.shift();
+        var err = errs.shift();
+        var result = results.shift();
+        var mockClient = new MockPgClient(query, params, err, result);
+        callback(null, mockClient, () => {
+            return;
+        });
+    };
+    return {
+        datastore: new Datastore(DATABASE_URL, connect),
+        assertLength: (length?: number) => {
+            if (!length) {
+                length = 0;
+            }
+            assert.equal(queries.length, length);
+            assert.equal(values.length, length);
+            assert.equal(errs.length, length);
+            assert.equal(results.length, length);
+        }
+    };
+};
+
 describe("Datastore", () => {
     describe("#query", () => {
         it("should create a connection", (done) => {
@@ -139,6 +173,82 @@ describe("Datastore", () => {
                 assert(true, "This is the correct code path");
             };
             return datastore.getUser(id).then(success, fail);
+        });
+    });
+
+    describe("#getOrCreateUser", () => {
+        it("should not create a user if one is found", () => {
+            var user = {
+                id: 1,
+                name: "Sushi"
+            };
+            var context = createDatastoreWithMultipleQueries(
+                [queries.FIND_USER],
+                [
+                    [user.id]
+                ],
+                [null],
+                [
+                    {rows: [user]}
+                ]
+            );
+            return context.datastore.getOrCreateUser(user.id, user.name).then((value) => {
+                assert.deepEqual(user, value);
+                context.assertLength();
+            });
+        });
+
+        it("should create a user if one is not found", () => {
+            var user = {
+                id: 1,
+                name: "Sushi"
+            };
+            var context = createDatastoreWithMultipleQueries(
+                [queries.FIND_USER, queries.INSERT_USER],
+                [
+                    [user.id],
+                    [user.id, user.name]
+                ],
+                [null, null],
+                [
+                    {rows: []},
+                    {rows: [user]}
+                ]
+            );
+            return context.datastore.getOrCreateUser(user.id, user.name).then((value) => {
+                assert.deepEqual(user, value);
+                context.assertLength();
+            });
+        });
+
+        it("should not create a user if there is an error", () => {
+            var user = {
+                id: 1,
+                name: "Sushi"
+            };
+            var error = new Error("fail");
+            var context = createDatastoreWithMultipleQueries(
+                [queries.FIND_USER, queries.INSERT_USER],
+                [
+                    [user.id],
+                    [user.id, user.name]
+                ],
+                [error, null],
+                [
+                    {rows: []},
+                    {rows: [user]}
+                ]
+            );
+            var success = () => {
+                assert(false, "We should never have gotten here");
+            };
+            var fail = (err: Error) => {
+                context.assertLength(1);
+                if (err !== error) {
+                    throw err;
+                }
+            };
+            return context.datastore.getOrCreateUser(user.id, user.name).then(success, fail);
         });
     });
 });
