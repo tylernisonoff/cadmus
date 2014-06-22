@@ -4,6 +4,7 @@
 import assert = require("assert");
 import Datastore = require("../../src/datastore/datastore");
 import pg = require("pg");
+import queries = require("../../src/datastore/queries");
 import Queryable = require("../../src/datastore/queryable");
 import User = require("../../src/models/user");
 
@@ -65,46 +66,43 @@ describe("Datastore", () => {
         });
 
         it("should pass the query text and values to the client", () => {
-            var sql = "SELECT * FROM users WHERE id = $1";
             var id = [1];
-            var datastore = createDatastore(sql, id, null, {rows: []});
-            return datastore.query(sql, id);
+            var datastore = createDatastore(queries.FIND_USER, id, null, {rows: []});
+            return datastore.query(queries.FIND_USER, id);
         });
 
         it("should reject the promise if there is an error", () => {
-            var sql = "SELECT * FROM users";
-            var values = [];
+            var values = [1];
             var err = new Error("Rejected");
             var results = {
                 rows: []
             };
-            var datastore = createDatastore(sql, values, err, results);
+            var datastore = createDatastore(queries.FIND_USER, values, err, results);
             var success = (value: pg.QueryResult) => {
                 assert(false, "This should never be called");
             };
             var fail = (e: Error) => {
                 assert.deepEqual(e, err);
             };
-            return datastore.query(sql, values).then(success, fail);
+            return datastore.query(queries.FIND_USER, values).then(success, fail);
         });
 
         it("should pass the result as the value", () => {
-            var sql = "SELECT * FROM users";
-            var values = [];
+            var values = [1];
             var err: Error = null;
             var results = {
                 rows: [
                     {id: 1}
                 ]
             };
-            var datastore = createDatastore(sql, values, err, results);
+            var datastore = createDatastore(queries.FIND_USER, values, err, results);
             var success = (value: pg.QueryResult) => {
                 assert.deepEqual(results, value);
             };
             var fail = (err: Error) => {
                 assert(false, "This should never be called");
             };
-            return datastore.query(sql, values).then(success, fail);
+            return datastore.query(queries.FIND_USER, values).then(success, fail);
         });
     });
 
@@ -115,13 +113,12 @@ describe("Datastore", () => {
                 id: id,
                 name: "Sushi"
             };
-            var sql = "SELECT * FROM users WHERE id = $1";
             var values = [id];
             var err: Error = null;
             var results = {
                 rows: [user]
             };
-            var datastore = createDatastore(sql, values, err, results);
+            var datastore = createDatastore(queries.FIND_USER, values, err, results);
             return datastore.getUser(id).then((value) => {
                 assert.deepEqual(value, user);
             });
@@ -129,13 +126,12 @@ describe("Datastore", () => {
 
         it("should reject the promise if there are no results", () => {
             var id = 1;
-            var sql = "SELECT * FROM users WHERE id = $1";
             var values = [id];
             var err: Error = null;
             var results = {
                 rows: []
             };
-            var datastore = createDatastore(sql, values, err, results);
+            var datastore = createDatastore(queries.FIND_USER, values, err, results);
             var success = (value: User) => {
                 assert(false, "This should never be called");
             };
