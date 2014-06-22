@@ -10,9 +10,10 @@ class Datastore {
     private databaseUrl: string;
     private connect: (connection: string, callback: (err: Error, client: Queryable, done: () => void) => void) => void;
 
-    constructor(
-        databaseUrl: string,
-        connect: (connection: string, callback: (err: Error, client: Queryable, done: () => void) => void) => void) {
+    constructor(databaseUrl: string,
+                connect: (
+                    connection: string,
+                    callback: (err: Error, client: Queryable, done: () => void) => void) => void) {
         this.databaseUrl = databaseUrl;
         this.connect = connect;
     }
@@ -35,17 +36,17 @@ class Datastore {
         });
     }
 
-    private wrap<T>(value: T): Promise<T> {
-        return new Promise((resolve: (value: T) => void, reject: (err: Error) => void) => {
-           return resolve(value);
+    public getUser(id: number): Promise<User> {
+        return this.query("SELECT * FROM users WHERE id = $1", [id]).then((result) => {
+            if (result.rows.length !== 1) {
+                throw new Error("User not found");
+            }
+            return <User>result.rows[0];
         });
     }
 
     public getOrCreateUser(id: number, name: string): Promise<User> {
-        return this.query("SELECT * FROM users WHERE id = $1;", [id]).then((result) => {
-            if (result.rows.length === 1) {
-                return this.wrap(<User>result.rows[0]);
-            }
+        return this.getUser(id).catch((err) => {
             return this.query("INSERT INTO users(id, name) VALUES ($1, $2);", [id, name]).then((result) => {
                 return {
                     id: id,

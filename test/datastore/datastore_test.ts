@@ -5,6 +5,7 @@ import assert = require("assert");
 import Datastore = require("../../src/datastore/datastore");
 import pg = require("pg");
 import Queryable = require("../../src/datastore/queryable");
+import User = require("../../src/models/user");
 
 class MockPgClient implements Queryable {
     private queryText: string;
@@ -104,6 +105,44 @@ describe("Datastore", () => {
                 assert(false, "This should never be called");
             };
             return datastore.query(sql, values).then(success, fail);
+        });
+    });
+
+    describe("#getUser", () => {
+        it("should return a user", () => {
+            var id = 1;
+            var user = {
+                id: id,
+                name: "Sushi"
+            };
+            var sql = "SELECT * FROM users WHERE id = $1";
+            var values = [id];
+            var err: Error = null;
+            var results = {
+                rows: [user]
+            };
+            var datastore = createDatastore(sql, values, err, results);
+            return datastore.getUser(id).then((value) => {
+                assert.deepEqual(value, user);
+            });
+        });
+
+        it("should reject the promise if there are no results", () => {
+            var id = 1;
+            var sql = "SELECT * FROM users WHERE id = $1";
+            var values = [id];
+            var err: Error = null;
+            var results = {
+                rows: []
+            };
+            var datastore = createDatastore(sql, values, err, results);
+            var success = (value: User) => {
+                assert(false, "This should never be called");
+            };
+            var fail = (e: Error) => {
+                assert(true, "This is the correct code path");
+            };
+            return datastore.getUser(id).then(success, fail);
         });
     });
 });
