@@ -1,17 +1,18 @@
 /* tslint:disable:no-any */
-/// <reference path="../typings/bluebird/bluebird.d.ts" />
-/// <reference path="../typings/pg/pg.d.ts" />
+/// <reference path="../../typings/bluebird/bluebird.d.ts" />
+/// <reference path="../../typings/pg/pg.d.ts" />
 import pg = require("pg");
 import Promise = require("bluebird");
-import User = require("./models/user");
+import Queryable = require("./queryable");
+import User = require("../models/user");
 
 class Datastore {
     private databaseUrl: string;
-    private connect: (connection: string, callback: (err: Error, client: pg.Client, done: () => void) => void) => void;
+    private connect: (connection: string, callback: (err: Error, client: Queryable, done: () => void) => void) => void;
 
     constructor(
         databaseUrl: string,
-        connect: (connection: string, callback: (err: Error, client: pg.Client, done: () => void) => void) => void) {
+        connect: (connection: string, callback: (err: Error, client: Queryable, done: () => void) => void) => void) {
         this.databaseUrl = databaseUrl;
         this.connect = connect;
     }

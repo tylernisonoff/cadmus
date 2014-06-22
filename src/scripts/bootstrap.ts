@@ -1,7 +1,7 @@
 /// <reference path="../../typings/bluebird/bluebird.d.ts" />
 import config = require("../config");
-import connect = require("../connect");
-import Datastore = require("../datastore");
+import connect = require("../datastore/connect");
+import Datastore = require("../datastore/datastore");
 import fs = require("fs");
 import Promise = require("bluebird");
 
