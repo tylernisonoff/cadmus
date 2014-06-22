@@ -3,6 +3,7 @@
 /// <reference path="../../typings/pg/pg.d.ts" />
 import pg = require("pg");
 import Promise = require("bluebird");
+import queries = require("./queries");
 import Queryable = require("./queryable");
 import User = require("../models/user");
 
@@ -37,7 +38,7 @@ class Datastore {
     }
 
     public getUser(id: number): Promise<User> {
-        return this.query("SELECT * FROM users WHERE id = $1", [id]).then((result) => {
+        return this.query(queries.FIND_USER, [id]).then((result) => {
             if (result.rows.length !== 1) {
                 throw new Error("User not found");
             }
@@ -47,7 +48,7 @@ class Datastore {
 
     public getOrCreateUser(id: number, name: string): Promise<User> {
         return this.getUser(id).catch((err) => {
-            return this.query("INSERT INTO users(id, name) VALUES ($1, $2);", [id, name]).then((result) => {
+            return this.query(queries.INSERT_USER, [id, name]).then((result) => {
                 return {
                     id: id,
                     name: name
