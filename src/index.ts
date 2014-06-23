@@ -13,13 +13,25 @@ var app = express();
 var datastore = new Datastore(config.DATABASE_URL, connect);
 
 interface Profile {
+    provider: string;
     id: number;
     displayName: string;
 }
 
 passport.use(new passportAsana.Strategy(config.ASANA_STRATEGY,
     (accessToken: string, refreshToken: string, profile: Profile, done: (err: Error, profile: Profile) => void) => {
-    return datastore.getOrCreateUser(profile.id, profile.displayName).nodeify(done);
+        console.log(profile);
+    return datastore.getOrCreateUser(profile.id, profile.displayName).then((user) => {
+        return datastore.getOrCreateCredentials(
+            profile.provider,
+            profile.id.toString(),
+            accessToken,
+            refreshToken,
+            profile.id).then((credentials) => {
+                console.log(credentials);
+                return user;
+            });
+    }).nodeify(done);
 }));
 
 passport.serializeUser((user, done) => {
@@ -27,7 +39,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-   done(null, id);
+   datastore.getUser(id).nodeify(done);
 });
 
 app.use(passport.initialize());

@@ -1,12 +1,13 @@
 /* tslint:disable:no-any */
+/// <reference path="../../src/models/credentials.ts"/>
 /// <reference path="../../typings/mocha/mocha.d.ts" />
 /// <reference path="../../typings/pg/pg.d.ts" />
+/// <reference path="../../src/models/user.ts"/>
 import assert = require("assert");
 import Datastore = require("../../src/datastore/datastore");
 import pg = require("pg");
 import queries = require("../../src/datastore/queries");
 import Queryable = require("../../src/datastore/queryable");
-import User = require("../../src/models/user");
 
 class MockPgClient implements Queryable {
     private queryText: string;
@@ -249,6 +250,160 @@ describe("Datastore", () => {
                 }
             };
             return context.datastore.getOrCreateUser(user.id, user.name).then(success, fail);
+        });
+    });
+
+    describe("#getCredentials", () => {
+        it("should return a credentials", () => {
+            var service = "Asana";
+            var userId = 1;
+            var credentials = {
+                id: "1",
+                service: service,
+                serviceId: "1",
+                accessToken: "1",
+                refreshToken: "1",
+                userId: userId
+            };
+            var values = [service, userId];
+            var err: Error = null;
+            var results = {
+                rows: [credentials]
+            };
+            var datastore = createDatastore(queries.FIND_CREDENTIALS, values, err, results);
+            return datastore.getCredentials(service, userId).then((value) => {
+                assert.deepEqual(value, credentials);
+            });
+        });
+
+        it("should reject the promise if there are no results", () => {
+            var service = "Asana";
+            var userId = 1;
+
+            var values = [service, userId];
+            var err: Error = null;
+            var results = {
+                rows: []
+            };
+            var datastore = createDatastore(queries.FIND_CREDENTIALS, values, err, results);
+            var success = (value: Credentials) => {
+                assert(false, "This should never be called");
+            };
+            var fail = (e: Error) => {
+                assert(true, "This is the correct code path");
+            };
+            return datastore.getCredentials(service, userId).then(success, fail);
+        });
+    });
+
+    describe("#getOrCreateCredentials", () => {
+        it("should not create credentials if one is found", () => {
+            var credentials = {
+                id: "1",
+                service: "Asana",
+                serviceId: "1",
+                accessToken: "1",
+                refreshToken: "1",
+                userId: 1
+            };
+            var context = createDatastoreWithMultipleQueries(
+                [queries.FIND_CREDENTIALS],
+                [
+                    [credentials.service, credentials.userId]
+                ],
+                [null],
+                [
+                    {rows: [credentials]}
+                ]
+            );
+            return context.datastore.getOrCreateCredentials(
+                credentials.service,
+                credentials.serviceId,
+                credentials.accessToken,
+                credentials.refreshToken,
+                credentials.userId).then((value) => {
+                    assert.deepEqual(credentials, value);
+                    context.assertLength();
+                });
+        });
+
+        it("should create credentials if one is not found", () => {
+            var credentials = {
+                id: "1",
+                service: "Asana",
+                serviceId: "1",
+                accessToken: "1",
+                refreshToken: "1",
+                userId: 1
+            };
+            var context = createDatastoreWithMultipleQueries(
+                [queries.FIND_CREDENTIALS, queries.INSERT_CREDENTIALS],
+                [
+                    [credentials.service, credentials.userId],
+                    [credentials.service,
+                        credentials.serviceId,
+                        credentials.accessToken,
+                        credentials.refreshToken,
+                        credentials.userId]
+                ],
+                [null, null],
+                [
+                    {rows: []},
+                    {rows: [credentials]}
+                ]
+            );
+            return context.datastore.getOrCreateCredentials(
+                credentials.service,
+                credentials.serviceId,
+                credentials.accessToken,
+                credentials.refreshToken,
+                credentials.userId).then((value) => {
+                    assert.deepEqual(credentials, value);
+                    context.assertLength();
+                });
+        });
+
+        it("should not create credentials if there is an error", () => {
+            var credentials = {
+                id: "1",
+                service: "Asana",
+                serviceId: "1",
+                accessToken: "1",
+                refreshToken: "1",
+                userId: 1
+            };
+            var error = new Error("fail");
+            var context = createDatastoreWithMultipleQueries(
+                [queries.FIND_CREDENTIALS, queries.INSERT_CREDENTIALS],
+                [
+                    [credentials.service, credentials.userId],
+                    [credentials.service,
+                        credentials.serviceId,
+                        credentials.accessToken,
+                        credentials.refreshToken,
+                        credentials.userId]
+                ],
+                [error, null],
+                [
+                    {rows: []},
+                    {rows: [credentials]}
+                ]
+            );
+            var success = () => {
+                assert(false, "We should never have gotten here");
+            };
+            var fail = (err: Error) => {
+                context.assertLength(1);
+                if (err !== error) {
+                    throw err;
+                }
+            };
+            return context.datastore.getOrCreateCredentials(
+                credentials.service,
+                credentials.serviceId,
+                credentials.accessToken,
+                credentials.refreshToken,
+                credentials.userId).then(success, fail);
         });
     });
 });

@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS credentials (
     service text NOT NULL,
     serviceId text NOT NULL,
     accessToken text NOT NULL,
-    refershToken text NOT NULL,
+    refreshToken text NOT NULL,
     userId bigint NOT NULL REFERENCES users (id)
 );

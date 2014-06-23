@@ -1,10 +1,8 @@
 interface Credentials {
-    id: number;
+    id: string;
     service: string;
     serviceId: string;
     accessToken: string;
     refreshToken: string;
     userId: number;
 }
-
-export = Credentials;
