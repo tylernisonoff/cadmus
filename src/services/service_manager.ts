@@ -6,7 +6,7 @@
 import Datastore = require("../datastore/datastore");
 import express = require("express");
 import passport = require("passport");
-import Service = require("./service");
+import StrategyConstructable = require("./strategy_constructable");
 import util = require("util");
 
 interface RequestWithAccount extends express.Request {
@@ -21,8 +21,8 @@ class ServiceManager {
         this.datastore = datastore;
     }
 
-    private config(service: Service): StrategyConfig {
-        var prefix = util.format("%s_CLIENT_", service.name.toUpperCase());
+    private config(name: string): StrategyConfig {
+        var prefix = util.format("%s_CLIENT_", name.toUpperCase());
         return {
             clientID: process.env[prefix + "ID"],
             clientSecret: process.env[prefix + "SECRET"],
@@ -38,9 +38,9 @@ class ServiceManager {
         return util.format("/auth/%s/callback", name.toLowerCase());
     }
 
-    public registerService(service: Service, authenticates: boolean = false): void {
-        this.serviceMap[service.name] = authenticates;
-        var config = this.config(service);
+    public registerService(name: string, Strategy: StrategyConstructable, authenticates: boolean = false): void {
+        this.serviceMap[name] = authenticates;
+        var config = this.config(name);
         var strategy: passport.Strategy;
         if (authenticates) {
             var callback = (
@@ -48,7 +48,6 @@ class ServiceManager {
                 refreshToken: string,
                 profile: Profile,
                 done: (err: Error, profile: Profile) => void) => {
-                console.log(profile);
                 var id = parseInt(profile.id, 10);
                 return this.datastore.getOrCreateUser(id, profile.displayName).then((user) => {
                     return this.datastore.getOrCreateCredentials(
@@ -61,9 +60,9 @@ class ServiceManager {
                         });
                 }).nodeify(done);
             };
-            strategy = new service.Strategy(config, callback);
+            strategy = new Strategy(config, callback);
         } else {
-            strategy = new service.Strategy(config);
+            strategy = new Strategy(config);
         }
         passport.use(strategy);
     }
