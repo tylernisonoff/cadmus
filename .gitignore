@@ -30,3 +30,7 @@ node_modules
 # IntelliJ
 *.iml
 .idea
+
+# Configuration
+config.sh
+

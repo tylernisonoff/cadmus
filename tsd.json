@@ -6,22 +6,25 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "request/request.d.ts": {
-      "commit": "af346df4042ce4a36bbabdc9e00583d52c1dfe84"
+      "commit": "4c09ca98bb22e3fa6964d8d27b9a359e54f9d83c"
     },
     "mocha/mocha.d.ts": {
-      "commit": "af346df4042ce4a36bbabdc9e00583d52c1dfe84"
+      "commit": "4c09ca98bb22e3fa6964d8d27b9a359e54f9d83c"
     },
     "bluebird/bluebird.d.ts": {
-      "commit": "af346df4042ce4a36bbabdc9e00583d52c1dfe84"
+      "commit": "4c09ca98bb22e3fa6964d8d27b9a359e54f9d83c"
     },
     "pg/pg.d.ts": {
-      "commit": "9ff1cf69b31b1e37607110e6c4db349d02fd8341"
+      "commit": "4c09ca98bb22e3fa6964d8d27b9a359e54f9d83c"
     },
     "express/express.d.ts": {
-      "commit": "e315225df6808c091324d915d1effac04145f576"
+      "commit": "4c09ca98bb22e3fa6964d8d27b9a359e54f9d83c"
     },
     "node/node.d.ts": {
-      "commit": "e315225df6808c091324d915d1effac04145f576"
+      "commit": "4c09ca98bb22e3fa6964d8d27b9a359e54f9d83c"
+    },
+    "passport/passport.d.ts": {
+      "commit": "4c09ca98bb22e3fa6964d8d27b9a359e54f9d83c"
     }
   }
 }
