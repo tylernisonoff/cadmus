@@ -1,12 +1,17 @@
 /* tslint:disable:no-string-literal */
 /// <reference path="../../typings/express/express.d.ts" />
 /// <reference path="../../typings/passport/passport.d.ts" />
+/// <reference path="./profile.ts" />
 /// <reference path="./strategy_config.ts" />
 import Datastore = require("../datastore/datastore");
 import express = require("express");
 import passport = require("passport");
 import Service = require("./service");
 import util = require("util");
+
+interface RequestWithAccount extends express.Request {
+    account: Object;
+}
 
 class ServiceManager {
     private datastore: Datastore;
@@ -35,7 +40,32 @@ class ServiceManager {
 
     public registerService(service: Service, authenticates: boolean = false): void {
         this.serviceMap[service.name] = authenticates;
-        passport.use(new service.Strategy(this.config(service), service.callback));
+        var config = this.config(service);
+        var strategy: passport.Strategy;
+        if (authenticates) {
+            var callback = (
+                accessToken: string,
+                refreshToken: string,
+                profile: Profile,
+                done: (err: Error, profile: Profile) => void) => {
+                console.log(profile);
+                var id = parseInt(profile.id, 10);
+                return this.datastore.getOrCreateUser(id, profile.displayName).then((user) => {
+                    return this.datastore.getOrCreateCredentials(
+                        profile.provider,
+                        profile.id,
+                        accessToken,
+                        refreshToken,
+                        id).then((credentials) => {
+                            return user;
+                        });
+                }).nodeify(done);
+            };
+            strategy = new service.Strategy(config, callback);
+        } else {
+            strategy = new service.Strategy(config);
+        }
+        passport.use(strategy);
     }
 
     public init(app: express.Application): void {
@@ -58,11 +88,19 @@ class ServiceManager {
                     failureRedirect: "/losing"
                 }));
             } else {
-                app.get(this.authUrl(key), passport.authorize(key, {}));
-                app.get(this.callbackUrl(key), passport.authorize(key, {
-                    successRedirect: "/winning",
+                app.get(this.authUrl(key), passport.authorize(key, {
                     failureRedirect: "/losing"
                 }));
+                app.get(this.callbackUrl(key), passport.authorize(key, {
+                    failureRedirect: "/losing"
+                }), (req: RequestWithAccount, res: express.Response) => {
+                    var user = req.user;
+                    var account = req.account;
+                    return res.json({
+                        user: user,
+                        account: account
+                    });
+                });
             }
         });
     }

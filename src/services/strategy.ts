@@ -4,7 +4,7 @@
 import passport = require("passport");
 
 interface Strategy extends passport.Strategy {
-    new(config: StrategyConfig, callback: StrategyCallback): passport.Strategy
+    new(config: StrategyConfig, callback?: StrategyCallback): passport.Strategy
 }
 
 // #TODO: Interface Friction
