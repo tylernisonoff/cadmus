@@ -40,16 +40,22 @@ class ServiceManager {
 
     public registerService(name: string, Strategy: StrategyConstructable, authenticates: boolean = false): void {
         this.serviceMap[name] = authenticates;
-        var config = this.config(name);
-        var strategy: passport.Strategy;
+        var callback = (
+            accessToken: string,
+            refreshToken: string,
+            profile: Profile,
+            done: (err: Error, profile: Profile) => void) => {
+            console.log(accessToken, refreshToken, profile);
+            done(null, profile);
+        };
         if (authenticates) {
-            var callback = (
+            callback = (
                 accessToken: string,
                 refreshToken: string,
                 profile: Profile,
                 done: (err: Error, profile: Profile) => void) => {
                 var id = parseInt(profile.id, 10);
-                return this.datastore.getOrCreateUser(id, profile.displayName).then((user) => {
+                this.datastore.getOrCreateUser(id, profile.displayName).then((user) => {
                     return this.datastore.getOrCreateCredentials(
                         profile.provider,
                         profile.id,
@@ -60,11 +66,8 @@ class ServiceManager {
                         });
                 }).nodeify(done);
             };
-            strategy = new Strategy(config, callback);
-        } else {
-            strategy = new Strategy(config);
         }
-        passport.use(strategy);
+        passport.use(new Strategy(this.config(name), callback));
     }
 
     public init(app: express.Application): void {
