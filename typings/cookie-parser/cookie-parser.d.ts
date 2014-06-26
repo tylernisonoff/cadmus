@@ -8,7 +8,7 @@
 declare module "cookie-parser" {
     import express = require("express");
 
-    function cookieParser(secret: string, options?: Object): express.RequestFunction;
+    function cookieParser(secret?: string, options?: Object): express.RequestFunction;
 
     export = cookieParser;
 }

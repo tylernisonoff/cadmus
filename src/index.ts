@@ -22,7 +22,7 @@ var serviceManager = new ServiceManager(datastore);
 serviceManager.registerService(asana.name, asana.Strategy, true);
 serviceManager.registerService(facebook.name, facebook.Strategy);
 
-app.use(cookieParser(config.SECRET));
+app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(session({
     secret: config.SECRET
