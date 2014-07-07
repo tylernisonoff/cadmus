@@ -45,7 +45,6 @@ class ServiceManager {
             refreshToken: string,
             profile: Profile,
             done: (err: Error, profile: Profile) => void) => {
-            console.log(accessToken, refreshToken, profile);
             done(null, profile);
         };
         if (authenticates) {
@@ -96,11 +95,18 @@ class ServiceManager {
                 app.get(this.callbackUrl(key), passport.authorize(key, {
                     failureRedirect: "/losing"
                 }), (req: RequestWithAccount, res: express.Response) => {
-                    var user = req.user;
-                    var account = req.account;
-                    return res.json({
-                        user: user,
-                        account: account
+                    var user = <User>req.user;
+                    var account = <Profile>req.account;
+                    this.datastore.getOrCreateCredentials(account.id,
+                        account.provider,
+                        req.query.code,
+                        "",
+                        user.id
+                    ).then((credentials) => {
+                            res.json(credentials);
+                    }).catch((err) => {
+                            console.error(err);
+                            res.send(500);
                     });
                 });
             }
