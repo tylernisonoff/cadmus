@@ -97,8 +97,9 @@ class ServiceManager {
                 }), (req: RequestWithAccount, res: express.Response) => {
                     var user = <User>req.user;
                     var account = <Profile>req.account;
-                    this.datastore.getOrCreateCredentials(account.id,
+                    this.datastore.getOrCreateCredentials(
                         account.provider,
+                        account.id,
                         req.query.code,
                         "",
                         user.id
