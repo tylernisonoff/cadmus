@@ -24,4 +24,6 @@ var createSchema = readSchemaFile.then((schema: string) => {
     return datastore.query(schema, []);
 });
 
-createSchema.then(console.log, console.error);
+createSchema.then(console.log, console.error).then(() => {
+    process.exit();
+});
