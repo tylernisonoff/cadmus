@@ -1,11 +1,11 @@
 /* tslint:disable:no-string-literal */
 /// <reference path="../../typings/express/express.d.ts" />
 /// <reference path="../../typings/passport/passport.d.ts" />
-/// <reference path="./profile.ts" />
-/// <reference path="./strategy_config.ts" />
 import Datastore = require("../datastore/datastore");
 import express = require("express");
 import passport = require("passport");
+import Profile = require("./profile");
+import StrategyConfig = require("./strategy_config");
 import StrategyConstructable = require("./strategy_constructable");
 import util = require("util");
 

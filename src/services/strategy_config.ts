@@ -3,3 +3,5 @@ interface StrategyConfig {
     clientSecret: string;
     callbackURL: string;
 }
+
+export = StrategyConfig;

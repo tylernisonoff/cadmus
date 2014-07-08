@@ -6,3 +6,5 @@ interface Profile {
     _raw: string;
     _json: Object;
 }
+
+export = Profile;
