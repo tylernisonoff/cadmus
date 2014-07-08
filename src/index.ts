@@ -19,8 +19,8 @@ var datastore = new Datastore(config.DATABASE_URL, connect);
 
 var serviceManager = new ServiceManager(datastore);
 
-serviceManager.registerService(asana.name, asana.Strategy, true);
-serviceManager.registerService(facebook.name, facebook.Strategy);
+serviceManager.registerService(asana);
+serviceManager.registerService(facebook);
 
 app.use(cookieParser());
 app.use(morgan("dev"));

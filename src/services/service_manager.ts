@@ -5,8 +5,8 @@ import Datastore = require("../datastore/datastore");
 import express = require("express");
 import passport = require("passport");
 import Profile = require("./profile");
+import Service = require("./service");
 import StrategyConfig = require("./strategy_config");
-import StrategyConstructable = require("./strategy_constructable");
 import util = require("util");
 
 interface RequestWithAccount extends express.Request {
@@ -38,8 +38,12 @@ class ServiceManager {
         return util.format("/auth/%s/callback", name.toLowerCase());
     }
 
-    public registerService(name: string, Strategy: StrategyConstructable, authenticates: boolean = false): void {
-        this.serviceMap[name] = authenticates;
+    public registerService(service: Service): void {
+        var authenticates = false;
+        if (service.authenticates) {
+            authenticates = true;
+        }
+        this.serviceMap[service.name] = authenticates;
         var callback = (
             accessToken: string,
             refreshToken: string,
@@ -66,7 +70,7 @@ class ServiceManager {
                 }).nodeify(done);
             };
         }
-        passport.use(new Strategy(this.config(name), callback));
+        passport.use(new service.Strategy(this.config(service.name), callback));
     }
 
     public init(app: express.Application): void {

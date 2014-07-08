@@ -3,3 +3,4 @@ import passportAsana = require("passport-asana");
 
 export var name = "Asana";
 export var Strategy = passportAsana.Strategy;
+export var authenticates = true;
