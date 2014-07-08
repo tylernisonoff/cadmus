@@ -6,3 +6,5 @@ interface Credentials {
     refreshToken: string;
     userId: number;
 }
+
+export = Credentials;

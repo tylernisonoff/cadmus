@@ -1,13 +1,13 @@
 /* tslint:disable:no-any */
-/// <reference path="../../src/models/credentials.ts"/>
 /// <reference path="../../typings/mocha/mocha.d.ts" />
 /// <reference path="../../typings/pg/pg.d.ts" />
-/// <reference path="../../src/models/user.ts"/>
 import assert = require("assert");
+import Credentials = require("../../src/models/credentials");
 import Datastore = require("../../src/datastore/datastore");
 import pg = require("pg");
 import queries = require("../../src/datastore/queries");
 import Queryable = require("../../src/datastore/queryable");
+import User = require("../../src/models/user");
 
 class MockPgClient implements Queryable {
     private queryText: string;

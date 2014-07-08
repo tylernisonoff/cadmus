@@ -1,13 +1,13 @@
 /* tslint:disable:no-any */
 /// <reference path="../../typings/bluebird/bluebird.d.ts" />
-/// <reference path="../models/credentials.ts" />
 /// <reference path="../../typings/pg/pg.d.ts" />
-/// <reference path="../models/user.ts" />
+import Credentials = require("../models/credentials");
 import pg = require("pg");
 import Promise = require("bluebird");
 import queries = require("./queries");
 import Queryable = require("./queryable");
 import RecordNotFoundError = require("./record_not_found_error");
+import User = require("../models/user");
 
 class Datastore {
     private databaseUrl: string;

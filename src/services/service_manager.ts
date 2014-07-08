@@ -7,6 +7,7 @@ import passport = require("passport");
 import Profile = require("./profile");
 import Service = require("./service");
 import StrategyConfig = require("./strategy_config");
+import User = require("../models/user");
 import util = require("util");
 
 interface RequestWithAccount extends express.Request {
