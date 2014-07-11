@@ -100,7 +100,8 @@ class ServiceManager {
                 app.get(this.callbackUrl(key), passport.authorize(key, {
                     failureRedirect: "/losing"
                 }), (req: RequestWithAccount, res: express.Response) => {
-                    var user = <User>req.user;
+                    // If cookie is deleted and req.user exists, use that
+                    var user = <User>req.user || <User>req.cookies.user;
                     var account = <Profile>req.account;
                     this.datastore.getOrCreateCredentials(
                         account.provider,

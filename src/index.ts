@@ -30,6 +30,7 @@ app.use(session({
 serviceManager.init(app);
 
 app.get("/winning", (req, res) => {
+    res.cookie("user", req.cookies.user || req.user);
     res.send("So shines a good deed in a weary world.");
 });
 
